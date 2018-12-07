@@ -1,12 +1,16 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import axios from "axios";
+import Microphone from "./Microphone.jsx";
+// import handleAudioSuccess from "../helpers/handleAudioSuccess";
+import InteractiveMic from "./InteractiveMic.jsx";
 
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      transcript: ""
+      transcript: "",
+      blob: undefined
     };
 
     this.convertAudioFile = this.convertAudioFile.bind(this);
@@ -28,6 +32,8 @@ class App extends React.Component {
           Click to send audio to Watson!
         </button>
         <div>{transcript}</div>
+
+        <InteractiveMic sendBlob={this.sendBlob} />
       </React.Fragment>
     );
   }
