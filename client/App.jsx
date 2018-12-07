@@ -5,18 +5,29 @@ import axios from "axios";
 class App extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      transcript: ""
+    };
+
+    this.convertAudioFile = this.convertAudioFile.bind(this);
   }
 
-  componentDidMount() {
-    axios.post(
-      "https://gateway-wdc.watsonplatform.net/speech-to-text/api/v1/recognize"
-    );
+  convertAudioFile() {
+    axios.get("/data").then(data => {
+      this.setState({
+        transcript: data.data
+      });
+    });
   }
 
   render() {
+    const transcript = <p>{this.state.transcript}</p>;
     return (
       <React.Fragment>
-        <div />
+        <button onClick={this.convertAudioFile}>
+          Click to send audio to Watson!
+        </button>
+        <div>{transcript}</div>
       </React.Fragment>
     );
   }
