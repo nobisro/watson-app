@@ -8,6 +8,22 @@ export default class InteractiveMic extends React.Component {
     this.handleExperiment = this.handleExperiment.bind(this);
   }
 
+  handleAudioRecord() {
+    const player = document.getElementById("player");
+
+    const handleSuccess = function(stream) {
+      if (window.URL) {
+        player.src = window.URL.createObjectURL(stream);
+      } else {
+        player.src = stream;
+      }
+    };
+
+    navigator.mediaDevices
+      .getUserMedia({ audio: true, video: false })
+      .then(handleSuccess);
+  }
+
   handleExperiment() {
     const record = document.querySelector("#record");
     const stop = document.querySelector("#stop");
@@ -55,7 +71,7 @@ export default class InteractiveMic extends React.Component {
           const blob = new Blob(chunks, { type: "audio/ogg; codecs=opus" });
           chunks = [];
 
-          axios.post("/data", { data: blob }).then(success => {
+          axios.post("/api/blob", { data: blob }).then(success => {
             console.log("===== success =====");
           });
 
