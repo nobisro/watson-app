@@ -71,11 +71,44 @@ export default class InteractiveMic extends React.Component {
           deleteButton.innerHTML = "Delete";
 
           const blob = new Blob(chunks, { type: "audio/ogg; codecs=opus" });
+          const buffer = new ArrayBuffer(blob);
+
           chunks = [];
 
-          let b64 = btoa(blob);
+          // let b64 = btoa(blob);
+          // let b64Len = b64.length;
+          // console.log("blob:", blob);
 
-          console.log("b64:", btoa(blob));
+          const fd = new FormData();
+          // localStorage.myAudio = buffer;
+          fd.append("upl", blob, "recording.ogg");
+
+          // let base64data;
+          // var reader = new FileReader();
+          // reader.readAsDataURL(blob);
+          // reader.onloadend = function() {
+          //   base64data = reader.result;
+          //   // console.log("base64data:", base64data);
+          // };
+
+          // const options = {
+          //   method: "post",
+          //   url: "http://localhost:8080/api/blob",
+          //   data: { blob: fd },
+          //   responseType: "blob"
+          // };
+
+          // axios(options).then(() => {
+          //   console.log("posted");
+          // });
+
+          fetch("/api/blob", {
+            method: "post",
+            body: fd
+          });
+
+          // console.log("b64:", b64);
+          // console.log("len:", b64.length);
 
           //   const fd = new FormData();
           //   fd.append("audio", blob);
@@ -94,12 +127,12 @@ export default class InteractiveMic extends React.Component {
           //     }
           //   };
 
-          const options = {
-            method: "post",
-            url: "http://localhost:8080/api/blob",
-            data: b64,
-            responseType: "blob"
-          };
+          // const options = {
+          //   method: "post",
+          //   url: "http://localhost:8080/api/blob",
+          //   data: { blob: base64data, length: base64data.length },
+          //   responseType: "blob"
+          // };
 
           //   .then(() => {
           //     console.log("success");
@@ -108,9 +141,9 @@ export default class InteractiveMic extends React.Component {
           //     console.log("there was an error");
           //   });
 
-          axios(options).then(() => {
-            console.log("posted");
-          });
+          // axios(options).then(() => {
+          //   console.log("posted");
+          // });
 
           //   $.ajax({
           //     type: "POST",
