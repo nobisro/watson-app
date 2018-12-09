@@ -73,7 +73,7 @@ export default class InteractiveMic extends React.Component {
           const blob = new Blob(chunks, { type: "audio/ogg; codecs=opus" });
           chunks = [];
 
-          // let b64 = btoa(blob);
+          let b64 = btoa(blob);
 
           console.log("b64:", btoa(blob));
 
@@ -95,10 +95,10 @@ export default class InteractiveMic extends React.Component {
           //   };
 
           const options = {
+            method: "post",
             url: "http://localhost:8080/api/blob",
-            method: "POST",
-            body: JSON.stringify(b64),
-            headers: { "Content-Transfer-Encoding": "BASE64" }
+            data: b64,
+            responseType: "blob"
           };
 
           //   .then(() => {
@@ -108,7 +108,9 @@ export default class InteractiveMic extends React.Component {
           //     console.log("there was an error");
           //   });
 
-          rp.post(options);
+          axios(options).then(() => {
+            console.log("posted");
+          });
 
           //   $.ajax({
           //     type: "POST",
