@@ -1,5 +1,8 @@
 import React from "react";
+import rp from "request-promise";
+import request from "request";
 import axios from "axios";
+import $ from "jquery";
 
 export default class InteractiveMic extends React.Component {
   constructor(props) {
@@ -27,7 +30,6 @@ export default class InteractiveMic extends React.Component {
   handleExperiment() {
     const record = document.querySelector("#record");
     const stop = document.querySelector("#stop");
-    const soundClips = document.querySelector("#sound-clips");
     const constraints = { audio: true };
 
     navigator.mediaDevices
@@ -71,12 +73,63 @@ export default class InteractiveMic extends React.Component {
           const blob = new Blob(chunks, { type: "audio/ogg; codecs=opus" });
           chunks = [];
 
-          axios.post("/api/blob", { data: blob }).then(success => {
-            console.log("===== success =====");
-          });
+          // let b64 = btoa(blob);
+
+          console.log("b64:", btoa(blob));
+
+          //   const fd = new FormData();
+          //   fd.append("audio", blob);
+          //   fd.set("audio", blob);
+
+          //   const options = {
+          //     method: "post",
+          //     url: "http://localhost:8080/api/blog",
+          //     data: fd,
+          //     config: {
+          //       headers: {
+          //         "Content-Type": "multipart/form-data",
+          //         Accept: "application/json"
+          //       },
+          //       contentType: "multipart/form-data"
+          //     }
+          //   };
+
+          const options = {
+            url: "http://localhost:8080/api/blob",
+            method: "POST",
+            body: JSON.stringify(b64),
+            headers: { "Content-Transfer-Encoding": "BASE64" }
+          };
+
+          //   .then(() => {
+          //     console.log("success");
+          //   })
+          //   .catch(err => {
+          //     console.log("there was an error");
+          //   });
+
+          rp.post(options);
+
+          //   $.ajax({
+          //     type: "POST",
+          //     url: "http://localhost:8080/api/blob",
+          //     data: fd,
+          //     dataType: "audio/ogg; codecs=opus",
+          //     contentType: "multipart/form-data",
+          //     processData: false
+          //   });
+
+          //request.post("http://localhost:8080/api/blog", fd);
+
+          //   rp(options).then(() => {
+          //     console.log("sent");
+          //   });
+          //   axios.post("/api/blob", { data: blob }).then(success => {
+          //     console.log("===== success =====");
+          //   });
 
           const audioURL = window.URL.createObjectURL(blob);
-          console.log(blob.type);
+          console.log("blob.type:", blob.type);
           audio.src = audioURL;
 
           deleteButton.onclick = function(e) {
