@@ -7,11 +7,12 @@ const app = express();
 const watson = require("../helpers/watson");
 const bodyParser = require("body-parser");
 const convertToOgg = require("../helpers/convertToOgg");
+const handleAudioSuccess = require("../helpers/handleAudioSuccess");
 
 const port = 8080;
 
 app.use(express.static("../public"));
-// app.use(bodyParser.json());
+app.use(bodyParser.json());
 // app.use(
 //   bodyParser.urlencoded({
 //     extended: true
@@ -27,11 +28,31 @@ app.get("/data", (req, res) => {
 
 app.post("/api/blob", type, (req, res) => {
   console.log("post req hit!");
-  console.log("req.body", req.body);
-  console.log("req.file:", req.file);
-  convertToOgg(req.file);
+  console.log("file", req.body.upl);
+  console.log("req.file:", req.file.path);
+  // convertToOgg(req.file).then(data => {
+  //   console.log("data:", data);
+  // });
 
-  res.sendStatus(200);
+  watson
+    .callWatson(req.file.path)
+    .then(data => {
+      console.log(data);
+      return new Promise((resolve, reject) => {
+        resolve(data);
+      });
+    })
+    .then(success => {
+      console.log("success:", success);
+      res.send(success);
+    });
+  // .then(data => {
+  //   console.log("data in server:", data);
+  //   console.log("type of data:", typeof data);
+  //   return data;
+  //   // res.set({ "Content-Type": "text/plain" });
+  //   // res.type("application/json");
+  // })
 });
 
 app.listen(port, () => {
