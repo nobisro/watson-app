@@ -34,7 +34,6 @@ class App extends React.Component {
         </button>
         <div>{transcript}</div>
 
-        <Microphone />
         <section className="mw7 center">
           <h2 className="athelas ph3 ph0-l">Speaking Practice</h2>
           <Topic />
