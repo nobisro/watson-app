@@ -42,14 +42,29 @@ export default class InteractiveMic extends React.Component {
           method: "post",
           body: fd
         })
-          .then(response => response.body)
+          .then(response => {
+            console.log("response:", response);
+            return response.body;
+          })
           .then(body => {
             const reader = body.getReader();
-            console.log(reader.read());
+            return reader.read();
             // console.log("data:", data);
             // this.setState({
             //   data: data
             // });
+          })
+          .then(({ done, value }) => {
+            if (done) {
+              console.log("done:", done);
+            } else {
+              console.log("value:", value);
+              let str = new TextDecoder("utf-8").decode(value);
+              console.log("str:", str);
+              this.setState({
+                data: str
+              });
+            }
           });
       });
   }
