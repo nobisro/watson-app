@@ -41,12 +41,16 @@ export default class InteractiveMic extends React.Component {
         fetch("/api/blob", {
           method: "post",
           body: fd
-        }).then(data => {
-          console.log("data:", data);
-          this.setState({
-            data: data
+        })
+          .then(response => response.body)
+          .then(body => {
+            const reader = body.getReader();
+            console.log(reader.read());
+            // console.log("data:", data);
+            // this.setState({
+            //   data: data
+            // });
           });
-        });
       });
   }
 
@@ -131,87 +135,6 @@ export default class InteractiveMic extends React.Component {
           const formData = new FormData();
           // localStorage.myAudio = buffer;
           formData.append("upl", url);
-
-          // let base64data;
-          // var reader = new FileReader();
-          // reader.readAsDataURL(blob);
-          // reader.onloadend = function() {
-          //   base64data = reader.result;
-          //   // console.log("base64data:", base64data);
-          // };
-
-          // const options = {
-          //   method: "post",
-          //   url: "http://localhost:8080/api/blob",
-          //   data: { blob: fd },
-          //   responseType: "blob"
-          // };
-
-          // axios(options).then(() => {
-          //   console.log("posted");
-          // });
-
-          //
-          // fetch("/api/blob", {
-          //   method: "post",
-          //   body: formData
-          // });
-
-          // console.log("b64:", b64);
-          // console.log("len:", b64.length);
-
-          //   const fd = new FormData();
-          //   fd.append("audio", blob);
-          //   fd.set("audio", blob);
-
-          //   const options = {
-          //     method: "post",
-          //     url: "http://localhost:8080/api/blog",
-          //     data: fd,
-          //     config: {
-          //       headers: {
-          //         "Content-Type": "multipart/form-data",
-          //         Accept: "application/json"
-          //       },
-          //       contentType: "multipart/form-data"
-          //     }
-          //   };
-
-          // const options = {
-          //   method: "post",
-          //   url: "http://localhost:8080/api/blob",
-          //   data: { blob: base64data, length: base64data.length },
-          //   responseType: "blob"
-          // };
-
-          //   .then(() => {
-          //     console.log("success");
-          //   })
-          //   .catch(err => {
-          //     console.log("there was an error");
-          //   });
-
-          // axios(options).then(() => {
-          //   console.log("posted");
-          // });
-
-          //   $.ajax({
-          //     type: "POST",
-          //     url: "http://localhost:8080/api/blob",
-          //     data: fd,
-          //     dataType: "audio/ogg; codecs=opus",
-          //     contentType: "multipart/form-data",
-          //     processData: false
-          //   });
-
-          //request.post("http://localhost:8080/api/blog", fd);
-
-          //   rp(options).then(() => {
-          //     console.log("sent");
-          //   });
-          //   axios.post("/api/blob", { data: blob }).then(success => {
-          //     console.log("===== success =====");
-          //   });
 
           const audioURL = window.URL.createObjectURL(blob);
           console.log("blob.type:", blob.type);
