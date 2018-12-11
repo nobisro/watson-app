@@ -7,12 +7,17 @@ function asyncWatson(path) {
     iam_apikey: API.KEY,
     url: API.URL
   });
-
+  let audioPath;
+  if (path === undefined) {
+    audioPath = `${__dirname}/../assets/audio-file.flac`;
+  } else {
+    audioPath = path;
+  }
   // const buff = Buffer.from(path);
   // const audioData = fs.readFileSync(buff);
   //fs.createReadStream(`${path}`)
   let params = {
-    audio: fs.createReadStream(`${path}`),
+    audio: fs.createReadStream(`${audioPath}`),
     content_type: "audio/webm"
   };
 
@@ -22,6 +27,7 @@ function asyncWatson(path) {
         reject(err);
       } else {
         resolve(res["results"][0]["alternatives"][0]["transcript"]);
+        // resolve(res);
       }
     });
   });
