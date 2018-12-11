@@ -1,19 +1,29 @@
 const fs = require("fs");
 const atob = require("atob");
+const watson = require("./watson");
+const API = require("../API.js");
 
 function convertToOgg(file) {
   //   console.log("blob: ", JSON.parse(blobString.blob));
-  let filename = file.filename;
-  let path = file.path;
-  console.log("filename:", filename);
+  //   let filename = file.filename;
+  //   let path = file.path;
+  //console.log("filename:", filename);
 
-  fs.writeFileSync("new_recording.ogg", path, "utf8", err => {
-    if (err) {
-      console.log("there was an error....");
-    } else {
-      console.log("file written");
-    }
-  });
+  const arg = file;
+  console.log("file:", arg);
+
+  fs.writeFileSync("./test_recording.ogg", file, "utf8");
+  console.log("written");
+
+  return watson.callWatson(file);
+
+  //   fs.writeFileSync("new_recording.ogg", path, "utf8", err => {
+  //     if (err) {
+  //       console.log("there was an error....");
+  //     } else {
+  //       console.log("file written");
+  //     }
+  //   });
 
   //   const buff = Buffer.from(data);
 
