@@ -1,4 +1,6 @@
 import React from "react";
+import Microphone from "./Microphone.jsx";
+import InteractiveMic from "./InteractiveMic.jsx";
 
 class Topic extends React.Component {
   constructor(props) {
@@ -25,6 +27,7 @@ class Topic extends React.Component {
           <p className="f6 lh-copy gray mv0">
             <span className="ttu">Unit 4 Lesson 3</span>
           </p>
+          <InteractiveMic />
         </article>
 
         <article className="pv4 bt bb b--black-10 ph3 ph0-l">
@@ -44,6 +47,7 @@ class Topic extends React.Component {
           <p className="f6 lh-copy gray mv0">
             <span className="ttu">Unit 4 Lesson 3</span>
           </p>
+          <InteractiveMic />
         </article>
       </React.Fragment>
     );
