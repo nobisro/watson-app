@@ -7,8 +7,12 @@ import $ from "jquery";
 export default class InteractiveMic extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      data: "hello"
+    };
     this.handleAudioRecord = this.handleAudioRecord.bind(this);
     this.handleExperiment = this.handleExperiment.bind(this);
+    this.handleData = this.handleData.bind(this);
   }
 
   handleAudioRecord() {
@@ -27,7 +31,26 @@ export default class InteractiveMic extends React.Component {
       .then(handleSuccess);
   }
 
-  handleExperiment() {
+  handleData(url) {
+    fetch(url)
+      .then(response => response.blob())
+      .then(blob => {
+        const fd = new FormData();
+        fd.append("upl", blob, "./voice_recording.ogg");
+
+        fetch("/api/blob", {
+          method: "post",
+          body: fd
+        }).then(data => {
+          console.log("data:", data);
+          this.setState({
+            data: data
+          });
+        });
+      });
+  }
+
+  handleExperiment(handler) {
     const record = document.querySelector("#record");
     const stop = document.querySelector("#stop");
     const constraints = { audio: true };
@@ -37,7 +60,9 @@ export default class InteractiveMic extends React.Component {
       .then(mediaStream => {
         const player = document.getElementById("player");
 
-        const mediaRecorder = new MediaRecorder(mediaStream);
+        const mediaRecorder = new MediaRecorder(mediaStream, {
+          mimeType: "audio/webm; codecs=opus"
+        });
         console.log(mediaRecorder);
 
         // On click begins recording and changes button styling to red
@@ -70,7 +95,9 @@ export default class InteractiveMic extends React.Component {
           audio.setAttribute("controls", "au");
           deleteButton.innerHTML = "Delete";
 
-          const blob = new Blob(chunks, { type: "audio/ogg; codecs=opus" });
+          // const blob = new Blob(chunks, { type: "audio/ogg; codecs=opus" });
+
+          const blob = new Blob(chunks, { type: "audio/webm" });
           const buffer = new ArrayBuffer(blob);
 
           chunks = [];
@@ -78,10 +105,32 @@ export default class InteractiveMic extends React.Component {
           // let b64 = btoa(blob);
           // let b64Len = b64.length;
           // console.log("blob:", blob);
+          const a = document.createElement("a");
+          const url = window.URL.createObjectURL(blob);
+          console.log("url:", url);
 
-          const fd = new FormData();
+          handler(url);
+          // fetch(url)
+          //   .then(response => response.blob())
+          //   .then(blob => {
+          //     const fd = new FormData();
+          //     fd.append("upl", blob, "./voice_recording.ogg");
+
+          //     fetch("/api/blob", {
+          //       method: "post",
+          //       body: fd
+          //     }).then(data => {
+          //       this.handleData(data);
+          //     });
+          //   });
+          // a.href = url;
+          // a.download = "record.webm";
+          // a.click();
+          // document.body.appendChild(a);
+
+          const formData = new FormData();
           // localStorage.myAudio = buffer;
-          fd.append("upl", blob, "recording.ogg");
+          formData.append("upl", url);
 
           // let base64data;
           // var reader = new FileReader();
@@ -102,10 +151,11 @@ export default class InteractiveMic extends React.Component {
           //   console.log("posted");
           // });
 
-          fetch("/api/blob", {
-            method: "post",
-            body: fd
-          });
+          //
+          // fetch("/api/blob", {
+          //   method: "post",
+          //   body: formData
+          // });
 
           // console.log("b64:", b64);
           // console.log("len:", b64.length);
@@ -181,10 +231,19 @@ export default class InteractiveMic extends React.Component {
   render() {
     return (
       <React.Fragment>
-        <button onClick={this.handleExperiment}>experiment</button>
+        <button
+          onClick={() => {
+            this.handleExperiment(this.handleData);
+          }}
+        >
+          experiment
+        </button>
+        <button id="record">record</button> <button id="stop">stop</button>
+        <p>{this.state.data}</p>
       </React.Fragment>
     );
   }
 }
 
 //<button onClick={this.handleAudioRecord}>start</button>
+//<audio id="player" controls />
