@@ -32,6 +32,11 @@ export default class InteractiveMic extends React.Component {
   }
 
   handleData(url) {
+    /*
+    ============================================
+    url is the blob url referencing place in local storage which contains the blob binary audio data. The url is converted to an actual blob, and appended to a FormData object. That object, containing audio binary data, is then posted to the server, which makes the call to Watson API. After the response is returned, a FileReader object is created to asynchronously read the raw data buffer (in this case, the blob). That blob represents text data, and so is converted to a string using TextDecoder. This process continues until the file reader finishes reading, at which point the 'done' event is triggered, ending the process.
+    ============================================
+    */
     fetch(url)
       .then(response => response.blob())
       .then(blob => {
