@@ -1,18 +1,15 @@
 import React from "react";
-import rp from "request-promise";
-import request from "request";
-import axios from "axios";
-import $ from "jquery";
 
 export default class InteractiveMic extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: "hello"
+      data: "Say something!"
     };
     this.handleAudioRecord = this.handleAudioRecord.bind(this);
     this.handleExperiment = this.handleExperiment.bind(this);
     this.handleData = this.handleData.bind(this);
+    this.handleWorkers = this.handleWorkers.bind(this);
   }
 
   handleAudioRecord() {
@@ -49,24 +46,29 @@ export default class InteractiveMic extends React.Component {
           .then(body => {
             const reader = body.getReader();
             return reader.read();
-            // console.log("data:", data);
-            // this.setState({
-            //   data: data
-            // });
           })
           .then(({ done, value }) => {
             if (done) {
               console.log("done:", done);
             } else {
-              console.log("value:", value);
               let str = new TextDecoder("utf-8").decode(value);
-              console.log("str:", str);
               this.setState({
                 data: str
               });
             }
           });
       });
+  }
+
+  handleWorkers(url) {
+    let worker = new Worker("worker.js");
+
+    worker.postMessage(url);
+    console.log("InteractiveMic: Message posted to worker");
+
+    worker.onmessage = function(e) {
+      console.log("e:", e);
+    };
   }
 
   handleExperiment(handler) {
@@ -129,23 +131,6 @@ export default class InteractiveMic extends React.Component {
           console.log("url:", url);
 
           handler(url);
-          // fetch(url)
-          //   .then(response => response.blob())
-          //   .then(blob => {
-          //     const fd = new FormData();
-          //     fd.append("upl", blob, "./voice_recording.ogg");
-
-          //     fetch("/api/blob", {
-          //       method: "post",
-          //       body: fd
-          //     }).then(data => {
-          //       this.handleData(data);
-          //     });
-          //   });
-          // a.href = url;
-          // a.download = "record.webm";
-          // a.click();
-          // document.body.appendChild(a);
 
           const formData = new FormData();
           // localStorage.myAudio = buffer;
@@ -172,6 +157,7 @@ export default class InteractiveMic extends React.Component {
         <button
           onClick={() => {
             this.handleExperiment(this.handleData);
+            //this.handleExperiment(this.handleWorkers);
           }}
         >
           experiment
